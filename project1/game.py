@@ -1,3 +1,4 @@
+from typing import List
 q1="\nВиберіть значок гравець 1: "
 q2="\nВведіть значок гравець 2: "
 q3="\nБажаєте продовжити?(Yes/No): "
@@ -16,27 +17,21 @@ win_list=[[1,2,3],[1,4,7],
           [7,8,9],[3,6,9],
           [1,5,9],[3,5,7]]
 player2_list=[]
-def check_position(position, massive):
-    # Перевіряємо, чи елемент за вказаною позицією `position` не дорівнює " "
-    if massive[position] != " ":
-        return False
-    return True
-    
 
-def check_position(position, massive):
+def check_position(position: int, massive: List[str]) -> bool:
     if massive[position - 1] != " ":
         return False
-    return position
-    
-def check_win(board):
+    return True
+
+def check_win(board: List[str]) -> bool:
     for triplet in win_list:
         if all(board[index - 1] in ['X'] for index in triplet):
             return True
         elif all(board[index - 1] in ['O'] for index in triplet):
             return True
     return False
-    
-def question(que, options=None):
+
+def question(que: str, options: List[str] = None) -> str:
     print(que)
     
     if options:
@@ -47,10 +42,6 @@ def question(que, options=None):
                 return user_input
             else:
                 print("Будь ласка, введіть один із доступних варіантів відповідей.")
-    # else:
-    #     user_input = input("Введіть вашу відповідь: ")
-    #     return user_input
-
 
 def game_field(*cells):
     game_list = []
