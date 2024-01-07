@@ -85,7 +85,45 @@ class Chips:
     
     def lose_bet(self):
         self.total -= self.bet
-
+        
+def build_card_image(cards, hide_second=False):
+    for card in cards:
+        print(f'┌─────┐', end=' ')
+    print()
+    
+    for card in cards:
+        if hide_second and card == cards[1]:
+            print(f'|  X  |', end=' ')
+        else:
+            print(f'| {card.rank:<2}  |', end=' ')
+    print()
+    
+    for card in cards:
+        print(f'|     |', end=' ')
+    print()
+    
+    for card in cards:
+        if hide_second and card == cards[1]:
+            print(f'|  X  |', end=' ')
+        else:
+            print(f'|  {card.suit}  |', end=' ')
+    print()
+    
+    for card in cards:
+        print(f'|     |', end=' ')
+    print()
+    
+    for card in cards:
+        if hide_second and card == cards[1]:
+            print(f'|  X  |', end=' ')
+        else:
+            print(f'|  {card.rank:>2} |', end=' ')
+    print()
+    
+    for card in cards:
+        print(f'└─────┘', end=' ')
+    print()
+    
 def take_bet():
     print(f"Ваш баланс: {player_money}")  
     try:
@@ -118,7 +156,10 @@ while True:
     
     
     # Show cards (but keep one dealer card hidden)
-    print("карти казино {} інша карта чекає ???".format(computer_hand.cards[0]))
+    print("карти казино ")
+    build_card_image(computer_hand.cards, hide_second=True)
+    print("карти гравця ")
+    build_card_image(computer_hand.cards)
     print("карти гравця {} інша карта {}".format(player_hand.cards[0],player_hand.cards[1]))
     # print(computer_hand.cards[0]+ " " + "???")
     # print(player_hand.cards[0]+ " " + player_hand.cards[1])
