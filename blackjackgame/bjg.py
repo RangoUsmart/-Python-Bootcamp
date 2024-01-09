@@ -133,6 +133,11 @@ def take_bet():
         print("Введіть число")
         take_bet()
 
+def hit_or_stand(deck,hand):
+    global playing  # to control an upcoming while loop
+    
+    pass
+
 while True:
     # Print an opening statement
     print("Гра в блекджек!")
@@ -160,15 +165,11 @@ while True:
     build_card_image(computer_hand.cards, hide_second=True)
     print("карти гравця ")
     build_card_image(computer_hand.cards)
-    print("карти гравця {} інша карта {}".format(player_hand.cards[0],player_hand.cards[1]))
-    # print(computer_hand.cards[0]+ " " + "???")
-    # print(player_hand.cards[0]+ " " + player_hand.cards[1])
-    break
     playing = True
     while playing:  # recall this variable from our hit_or_stand function
-            print("щось там")
+        print("щось там")
 
-        
+        break
         # Prompt for Player to Hit or Stand
         
         
@@ -177,8 +178,8 @@ while True:
         
         # If player's hand exceeds 21, run player_busts() and break out of loop
         
-            # playing = False
-            break
+        playing = False
+            # break
 
     # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
     
@@ -192,4 +193,4 @@ while True:
     
     # Ask to play again
 
-        # break
+    break
