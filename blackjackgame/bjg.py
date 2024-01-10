@@ -1,129 +1,21 @@
-import random 
-import classes as cl  
+
+from classes import Deck, Hand, Chips   
+import time
 
 cassino_money = 1000
 player_money = 100
 playing = True
 
-suits = ['♠', '♥', '♦', '♣']
-ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-values = {
-        '2':2,
-        '3':3,
-        '4':4,
-        '5':5,
-        '6':6,
-        '7':7,
-        '8':8, 
-        '9':9,
-        '10':10,
-        'J':10,
-        'Q':10,
-        'K':10,
-        'A':11
-        }
+    
 
-class Card:
-    
-    def __init__(self,suit,rank):
-        self.suit = suit
-        self.rank = rank
-        self.value = values[rank]
-        
-    def __str__(self):
-        return self.rank + ' ' + self.suit
-  
-class Deck:
-    
-    def __init__(self):
-        self.deck = []  # start with an empty list
-        for suit in suits:
-            for rank in ranks:
-                self.deck.append(Card(suit,rank))
-            # pass
-    
-    def __str__(self):
-        deck_str = ""
-        for card in self.deck:
-            deck_str += str(card) + "\n"
-        return deck_str
-    
-    def shuffle(self):
-        random.shuffle(self.deck)
-        
-    def deal(self):
-        car=self.deck.pop(0)
-        return car
-    
-class Hand:
-    def __init__(self):
-        self.cards = []  # start with an empty list as we did in the Deck class
-        self.value = 0   # start with zero value
-        self.aces = 0    # add an attribute to keep track of aces
-        
-    def __str__(self):
-        hand_str = ""
-        for card in self.cards:
-            hand_str += str(card) + "\n"
-        return hand_str
-    
-    def add_card(self,card):
-        self.cards.append(card)
-    
-    def adjust_for_ace(self):
-        pass
-    
-class Chips:
-    
-    def __init__(self):
-        self.total = player_money  # This can be set to a default value or supplied by a user input
-        self.bet = 0
-        
-    def win_bet(self):
-        self.total += self.bet*1.5
-        # pass
-    
-    def lose_bet(self):
-        self.total -= self.bet
-        
-def build_card_image(cards, hide_second=False):
-    for card in cards:
-        print(f'┌─────┐', end=' ')
-    print()
-    
-    for card in cards:
-        if hide_second and card == cards[1]:
-            print(f'|  X  |', end=' ')
-        else:
-            print(f'| {card.rank:<2}  |', end=' ')
-    print()
-    
-    for card in cards:
-        print(f'|     |', end=' ')
-    print()
-    
-    for card in cards:
-        if hide_second and card == cards[1]:
-            print(f'|  X  |', end=' ')
-        else:
-            print(f'|  {card.suit}  |', end=' ')
-    print()
-    
-    for card in cards:
-        print(f'|     |', end=' ')
-    print()
-    
-    for card in cards:
-        if hide_second and card == cards[1]:
-            print(f'|  X  |', end=' ')
-        else:
-            print(f'|  {card.rank:>2} |', end=' ')
-    print()
-    
-    for card in cards:
-        print(f'└─────┘', end=' ')
-    print()
-    
+def draw_table(coins=0, prob=Deck(), bank=0):
+    print("_"*12)
+    print("банк: {}$    ".format(bank))
+    print("вірогідність: {:.2f}%    ".format(prob*100))
+    print(" "*12)
+    print(" "*12)
+    print("_"*12)   
+
 def take_bet():
     print(f"Ваш баланс: {player_money}")  
     try:
@@ -135,16 +27,40 @@ def take_bet():
 
 def hit_or_stand(deck,hand):
     global playing  # to control an upcoming while loop
+    ask=input("Ваш хід: ")
+    if ask == "hit":
+        hand.add_card(deck.deal())
+        if hand.value >= 21:
+            playing = False 
+    elif ask == "stand":
+        playing = False
     
-    pass
+def calculate_probability(cards):
+    total = 0
+    count = 0
 
+    for card in cards:
+        if card.rank != 'A':
+            total += card.value
+        else:
+            count += 1
+
+    if count > 0:
+        for _ in range(count):
+            if total + 11 <= 21:
+                total += 11
+            else:
+                total += 1
+
+    probability = (21 - total) / (len(cards) * 13 - len(cards))
+    return probability
+
+        
 while True:
     # Print an opening statement
     print("Гра в блекджек!")
     koloda=Deck()
     koloda.shuffle()
-    # print(koloda)
-    
     
     # Create & shuffle the deck, deal two cards to each player
     computer_hand = Hand()
@@ -154,40 +70,52 @@ while True:
         computer_hand.add_card(koloda.deal())
         player_hand.add_card(koloda.deal())
     # Set up the Player's chips
-    chips=Chips()
-    # Prompt the Player for their bet
-    # print(koloda)
-    chips.bet=take_bet()
-    
-    
-    # Show cards (but keep one dealer card hidden)
-    print("карти казино ")
-    build_card_image(computer_hand.cards, hide_second=True)
-    print("карти гравця ")
-    build_card_image(computer_hand.cards)
+    comp_chips=Chips()
+    comp_chips.total=1000
+    player_chips=Chips()
+    player_chips.total=100
+
+    player_chips.bet=take_bet()
     playing = True
     while playing:  # recall this variable from our hit_or_stand function
-        print("щось там")
-
-        break
-        # Prompt for Player to Hit or Stand
         
-        
-        # Show cards (but keep one dealer card hidden)
- 
-        
-        # If player's hand exceeds 21, run player_busts() and break out of loop
-        
-        playing = False
-            # break
-
-    # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
+        computer_hand.build_card_image( hide_second=True)
+        print("карти казино ")
+        draw_table(prob=calculate_probability(player_hand.cards),
+                   bank=player_chips.bet*1.5)
+        print("карти гравця ")
+        player_hand.build_card_image()
+        print("Для продовження введіть hit або stand")
+        hit_or_stand(koloda,player_hand)
+        if player_hand.value>21:
+            comp_chips.win_bet()
+            player_chips.lose_bet()
     
-    
-        # Show all cards
-    
-        # Run different winning scenarios
-        
+    while calculate_probability(computer_hand.cards)>0.20 or (21>=player_hand.value>computer_hand.value ):
+            computer_hand.add_card(koloda.deal())
+            computer_hand.build_card_image()
+            print("карти казино ")
+            draw_table(prob=calculate_probability(computer_hand.cards),
+                       bank=player_chips.bet*1.5)
+            print("карти гравця ")
+            player_hand.build_card_image()
+            time.sleep(1)
+            
+    computer_hand.build_card_image()
+    print("карти казино ")
+    print("карти гравця ")
+    player_hand.build_card_image()
+      
+    if player_hand.value<computer_hand.value <=21 or player_hand.value>21:
+        print("Казино виграло!")
+        comp_chips.win_bet()
+        player_chips.lose_bet()
+    elif computer_hand.value < player_hand.value<=21 or computer_hand.value>21:
+        print("Ви виграли!")
+        player_chips.win_bet()
+        comp_chips.lose_bet()
+    else:
+        print("Нічия!")        
     
     # Inform Player of their chips total 
     
